@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Smart Queue &amp; Accessible Navigation</title>
+<style>
+:root{--bg:#f4f7f9;--card:#fff;--tx:#14212b;--mu:#586a77;--pr:#0a7c66;--on:#fff;--ac:#e6f4f0;--bd:#d6dfe5;--wa:#b4531a;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f171d;--card:#17222a;--tx:#e8eef2;--mu:#9aabb7;--pr:#3cc4a4;--on:#06241d;--ac:#143229;--bd:#2a3a45;--wa:#f0a060}}
+:root[data-hc]{--bg:#000;--card:#000;--tx:#fff;--mu:#fff;--pr:#ffd400;--on:#000;--ac:#1c1c1c;--bd:#fff;--wa:#ffd400}
+*{box-sizing:border-box}html{font-size:16px}html.big{font-size:20px}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,-apple-system,"Noto Sans Malayalam",sans-serif;line-height:1.45}
+header{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;padding:12px 14px}
+h1{font-size:1.1rem;margin:0}
+.tools button{margin-left:6px}
+nav{display:flex;gap:6px;padding:0 14px 10px;overflow-x:auto}
+button,select,input{font:inherit;color:var(--tx)}
+button{border:2px solid var(--bd);background:var(--card);border-radius:10px;padding:8px 12px;cursor:pointer;min-height:44px}
+button.on,button.p{background:var(--pr);color:var(--on);border-color:var(--pr);font-weight:600}
+main{padding:0 14px 30px;max-width:900px;margin:auto}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:14px;margin-bottom:12px}
+label{display:block;margin:8px 0 4px;font-weight:600}
+input[type=text],select{width:100%;padding:10px;border:2px solid var(--bd);border-radius:10px;background:var(--card);min-height:44px}
+.tok{font-size:2.6rem;font-weight:800;color:var(--pr);letter-spacing:1px}
+.alert{background:var(--ac);border:2px solid var(--pr);border-radius:12px;padding:12px;margin:10px 0;font-weight:700}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.muted{color:var(--mu);font-size:.9rem}
+.q{display:flex;justify-content:space-between;gap:8px;padding:6px 0;border-bottom:1px solid var(--bd)}
+.pri{color:var(--wa);font-weight:700}
+.tv{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.tv .card{text-align:center}.tv .tok{font-size:3.6rem}
+svg{width:100%;height:auto;background:var(--card);border:1px solid var(--bd);border-radius:14px}
+svg text{fill:var(--tx);font-size:11px;font-family:inherit}
+ol{padding-left:22px}
+body{background:radial-gradient(900px 300px at 50% -60px,var(--ac),var(--bg))}
+header{background:linear-gradient(135deg,var(--pr),#0b5fa5);color:#fff;border-radius:0 0 24px 24px;padding:16px;margin-bottom:14px;box-shadow:0 10px 28px rgba(0,0,0,.18)}
+header h1{font-size:1.2rem;display:flex;align-items:center;gap:8px}
+header button{background:rgba(255,255,255,.18);color:#fff;border:1px solid rgba(255,255,255,.4);min-height:40px;border-radius:999px}
+:root[data-hc] header{background:#000;border-bottom:3px solid #fff}
+.dot{width:10px;height:10px;border-radius:50%;background:#7dffb2;animation:pl 1.6s infinite}
+@keyframes pl{50%{opacity:.25;transform:scale(1.5)}}
+nav{position:fixed;bottom:0;left:0;right:0;z-index:5;background:var(--card);border-top:1px solid var(--bd);justify-content:space-around;padding:8px 8px calc(8px + env(safe-area-inset-bottom,0px))}
+nav button{flex:1;border:0;background:transparent;border-radius:14px;font-size:.78rem;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 4px}
+nav button span{font-size:1.4rem}
+nav button.on{background:var(--ac);color:var(--pr)}
+main{padding-bottom:110px}
+.card{border-radius:20px;box-shadow:0 6px 20px rgba(0,0,0,.07)}
+button.p{background:linear-gradient(135deg,var(--pr),#0b5fa5);color:#fff;border:0;border-radius:12px}
+:root[data-hc] button.p{background:#ffd400;color:#000}
+.ticket{border:2px dashed var(--pr)}
+.bar{height:12px;background:var(--bd);border-radius:9px;overflow:hidden;margin:10px 0}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--pr),#0b5fa5);transition:width .6s}
+.row button{flex:1}
+:root{--g2:#0b5fa5;--sh:0 10px 30px rgba(10,60,90,.12)}
+body{background:linear-gradient(180deg,var(--ac) 0,var(--bg) 340px) fixed}
+header{position:relative;overflow:hidden;padding:24px 18px 28px;border-radius:0 0 34px 34px;background:linear-gradient(135deg,#0a7c66 0%,#0b5fa5 60%,#6a4fd6 100%)}
+header::before,header::after{content:"";position:absolute;border-radius:50%;background:rgba(255,255,255,.13)}
+header::before{width:190px;height:190px;right:-50px;top:-70px}
+header::after{width:110px;height:110px;left:-30px;bottom:-60px}
+header>*{position:relative;z-index:1}
+header h1{font-size:1.4rem;letter-spacing:.2px}
+.card{border:0;border-radius:22px;box-shadow:var(--sh);animation:up .4s ease both;position:relative;overflow:hidden;padding-top:18px}
+.card::before{content:"";position:absolute;left:0;top:0;right:0;height:5px;background:linear-gradient(90deg,#0a7c66,#0b5fa5,#6a4fd6)}
+@keyframes up{from{opacity:0;transform:translateY(12px)}}
+.tok{background:linear-gradient(135deg,#0a7c66,#6a4fd6);-webkit-background-clip:text;background-clip:text;color:transparent;font-size:3.2rem}
+:root[data-hc] .tok{background:none;color:#ffd400}
+input[type=text]:focus,select:focus{outline:0;border-color:var(--pr);box-shadow:0 0 0 4px var(--ac)}
+input[type=text],select{border-radius:14px}
+button{transition:transform .12s,box-shadow .2s;border-radius:14px}
+button:active{transform:scale(.95)}
+button.p{box-shadow:0 8px 18px rgba(11,95,165,.3)}
+nav{left:12px;right:12px;bottom:calc(10px + env(safe-area-inset-bottom,0px));border:1px solid var(--bd);border-radius:28px;box-shadow:0 14px 34px rgba(0,0,0,.2);padding:6px;-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+nav button{border-radius:22px}
+nav button.on{background:linear-gradient(135deg,var(--pr),var(--g2));color:#fff}
+:root[data-hc] nav button.on{background:#ffd400;color:#000}
+.tv .tok{font-size:4.4rem}
+.tv .card:nth-child(1)::before{background:#0a7c66}
+.tv .card:nth-child(2)::before{background:#0b5fa5}
+.tv .card:nth-child(3)::before{background:#6a4fd6}
+.q{padding:10px 14px;margin:8px 0;border:0;background:var(--ac);border-radius:14px}
+svg{box-shadow:var(--sh);border:0;margin-bottom:12px}
+.alert{background:var(--ac);border-radius:16px;animation:glow 1.8s infinite}
+@keyframes glow{50%{box-shadow:0 0 0 7px var(--ac)}}
+.bar{height:14px}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head><body>
+<header><h1><span class="dot"></span><span id="ti"></span></h1><div class="tools"><button id="bl">മലയാളം</button><button id="bf" aria-label="Large text">A+</button><button id="bh" aria-label="High contrast">◐</button></div></header>
+<nav id="nav"></nav><main id="app"></main>
+<script>
+var T={en:{ti:"Smart Queue & Navigation",pa:"Patient",st:"Staff",tv:"Display",mp:"Map",nm:"Name",dp:"Department",pr:"Senior citizen / disabled / emergency",gt:"Get token",wt:"Estimated wait",ah:"People ahead",nr:"Your turn is near! Please move to the counter area.",cl:"Your token is called. Go to the counter.",cn:"Call next",dn:"Done",sk:"Skip",sv:"Now serving",wl:"Waiting",fr:"From",to:"To",wc:"Wheelchair-friendly route",sp:"Speak directions",dm:"Add demo patients",mn:"min",ent:"Entrance",OPD:"OPD",LAB:"Lab",PH:"Pharmacy",hall:"Main hall",jn:"Junction",none:"No one waiting",route:"Directions",walk:"Walk to",steps:"Take the steps to",ramp:"Take the ramp to",nt:"Get a token first, then see the route to your counter.",tot:"Total distance",m:"m",cx:"Cancel token",sd:"Served",ln:"Waiting now",rc:"Recall"},
+ml:{ti:"സ്മാർട്ട് ക്യൂ & വഴികാട്ടി",pa:"രോഗി",st:"ജീവനക്കാർ",tv:"ഡിസ്പ്ലേ",mp:"വഴി",nm:"പേര്",dp:"വിഭാഗം",pr:"മുതിർന്ന പൗരൻ / ഭിന്നശേഷി / അടിയന്തരം",gt:"ടോക്കൺ എടുക്കുക",wt:"കാത്തിരിപ്പ് സമയം",ah:"മുന്നിലുള്ളവർ",nr:"നിങ്ങളുടെ ഊഴം അടുത്തു! കൗണ്ടറിനടുത്തേക്ക് വരൂ.",cl:"നിങ്ങളുടെ ടോക്കൺ വിളിച്ചു. കൗണ്ടറിലേക്ക് പോകുക.",cn:"അടുത്തത് വിളിക്കുക",dn:"പൂർത്തിയായി",sk:"ഒഴിവാക്കുക",sv:"ഇപ്പോൾ വിളിക്കുന്നത്",wl:"കാത്തിരിക്കുന്നവർ",fr:"ആരംഭം",to:"ലക്ഷ്യം",wc:"വീൽചെയർ വഴി",sp:"ശബ്ദ നിർദ്ദേശം",dm:"ഡെമോ രോഗികളെ ചേർക്കുക",mn:"മിനിറ്റ്",ent:"പ്രവേശന കവാടം",OPD:"ഒ.പി",LAB:"ലാബ്",PH:"ഫാർമസി",hall:"പ്രധാന ഹാൾ",jn:"ജങ്ഷൻ",none:"ആരും കാത്തിരിക്കുന്നില്ല",route:"നിർദ്ദേശങ്ങൾ",walk:"നടക്കുക:",steps:"പടികൾ കയറി പോകുക:",ramp:"റാമ്പ് വഴി പോകുക:",nt:"ആദ്യം ടോക്കൺ എടുക്കുക, പിന്നെ വഴി കാണാം.",tot:"ആകെ ദൂരം",m:"മീ",cx:"ടോക്കൺ റദ്ദാക്കുക",sd:"പൂർത്തിയായി",ln:"ഇപ്പോൾ കാത്തിരിക്കുന്നവർ",rc:"വീണ്ടും വിളിക്കുക"}};
+var L="en",big=0,view="pa",D=["OPD","LAB","PH"],AV={OPD:6,LAB:4,PH:2},PF={OPD:"O",LAB:"L",PH:"P"};
+var S={q:{OPD:[],LAB:[],PH:[]},cur:{OPD:null,LAB:null,PH:null},n:{OPD:0,LAB:0,PH:0},mine:null,sv:{OPD:0,LAB:0,PH:0},dsel:"LAB",from:"E",wc:false};
+function t(k){return T[L][k]||k}
+function mk(name,d,pri){var id=PF[d]+"-"+String(++S.n[d]).padStart(3,"0"),o={id:id,name:name,d:d,pri:pri},q=S.q[d];
+ if(pri){var i=0;while(i<q.length&&q[i].pri)i++;q.splice(i,0,o)}else q.push(o);return o}
+function pos(o){return S.q[o.d].findIndex(function(x){return x.id==o.id})}
+function wait(o){var p=pos(o);return p*AV[o.d]}
+/* graph */
+var N={E:[40,130],H:[130,130],J:[230,130],OPD:[230,40],PH:[350,130],ST:[285,180],RP:[230,215],LAB:[350,220]};
+var NM={E:"ent",H:"hall",J:"jn",OPD:"OPD",PH:"PH",ST:"jn",RP:"jn",LAB:"LAB"};
+var EG=[["E","H"],["H","J"],["J","OPD"],["J","PH"],["J","ST","s"],["ST","LAB","s"],["J","RP","r"],["RP","LAB","r"]];
+function dist(a,b){return Math.hypot(N[a][0]-N[b][0],N[a][1]-N[b][1])}
+function route(a,b,wc){var d={},pv={},Q=Object.keys(N);Q.forEach(function(k){d[k]=1e9});d[a]=0;
+ while(Q.length){Q.sort(function(x,y){return d[x]-d[y]});var u=Q.shift();if(u==b)break;
+  EG.forEach(function(e){if(wc&&e[2]=="s")return;var v=e[0]==u?e[1]:e[1]==u?e[0]:null;if(!v)return;var w=d[u]+dist(u,v);if(w<d[v]){d[v]=w;pv[v]=[u,e[2]]}})}
+ var p=[],c=b;while(c!=a&&pv[c]){p.unshift([pv[c][0],c,pv[c][1]]);c=pv[c][0]}return{segs:p,len:d[b]}}
+function nameOf(k){return k=="ST"||k=="RP"?(k=="ST"?(L=="en"?"stair landing":"പടിക്കെട്ട്"):(L=="en"?"ramp":"റാമ്പ്")):t(NM[k])}
+function dirs(r){return r.segs.map(function(s){var k=s[2]=="s"?"steps":s[2]=="r"?"ramp":"walk";return t(k)+" "+nameOf(s[1])+" ("+Math.round(dist(s[0],s[1])/6)+" "+t("m")+")"})}
+function speak(lines){try{speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(lines.join(". "));u.lang=L=="ml"?"ml-IN":"en-IN";speechSynthesis.speak(u)}catch(e){}}
+/* views */
+function opts(sel){return D.map(function(d){return'<option value="'+d+'"'+(d==sel?" selected":"")+'>'+t(d)+'</option>'}).join("")}
+function vPa(){var m=S.mine,h='<div class="card"><label for="nm">'+t("nm")+'</label><input type="text" id="nm" autocomplete="off"><label for="dp">'+t("dp")+'</label><select id="dp">'+opts(S.dsel)+'</select><label><input type="checkbox" id="pr"> '+t("pr")+'</label><p><button class="p" id="gt">'+t("gt")+'</button></p></div>';
+ if(m){var p=pos(m),called=S.cur[m.d]&&S.cur[m.d].id==m.id;h+='<div class="card ticket"><div class="muted">'+t("sv")+': <b>'+(S.cur[m.d]?S.cur[m.d].id:"—")+'</b></div><div class="tok">'+m.id+'</div><div>'+t(m.d)+(m.pri?' <span class="pri">★</span>':'')+'</div>';
+  if(called)h+='<div class="alert" role="alert">'+t("cl")+'</div>';
+  else if(p>=0){h+='<p>'+t("ah")+': <b>'+p+'</b><br>'+t("wt")+': <b>'+wait(m)+' '+t("mn")+'</b></p>';if(p<=2)h+='<div class="alert" role="alert">🔔 '+t("nr")+'</div>'}
+  h+='<div class="bar"><i style="width:'+(called?100:p<0?0:Math.max(8,100-p*15))+'%"></i></div><p class="row"><button class="p" id="rt">🗺️ '+t("mp")+'</button><button id="cx">'+t("cx")+'</button></p></div>'}return h}
+function vSt(){var d=S.dsel,q=S.q[d],c=S.cur[d];
+ var h='<div class="card"><label for="dp">'+t("dp")+'</label><select id="dp">'+opts(d)+'</select><p class="row"><button class="p" id="cn">'+t("cn")+'</button><button id="rc">'+t("rc")+'</button><button id="dn">'+t("dn")+'</button><button id="sk">'+t("sk")+'</button><button id="dm">'+t("dm")+'</button></p><p>'+t("sv")+': <span class="tok" style="font-size:1.8rem">'+(c?c.id:"—")+'</span> <span class="muted">'+t("sd")+': '+S.sv[d]+'</span></p></div><div class="card"><b>'+t("wl")+' ('+q.length+')</b>';
+ if(!q.length)h+='<p class="muted">'+t("none")+'</p>';q.forEach(function(o,i){h+='<div class="q"><span>'+o.id+' '+o.name+(o.pri?' <span class="pri">★</span>':'')+'</span><span class="muted">~'+i*AV[d]+' '+t("mn")+'</span></div>'});return h+'</div>'}
+function vTv(){return'<div class="tv">'+D.map(function(d){var c=S.cur[d];return'<div class="card"><div class="muted">'+t(d)+'</div><div class="tok">'+(c?c.id:"—")+'</div><div class="muted">'+t("wl")+': '+S.q[d].length+' · '+t("sd")+': '+S.sv[d]+'</div></div>'}).join("")+'</div>'}
+function vMp(){var r=route(S.from,S.dsel,S.wc),ds=dirs(r);
+ var sv='<svg viewBox="0 0 400 260" role="img" aria-label="Hospital floor map">';
+ EG.forEach(function(e){var a=N[e[0]],b=N[e[1]];sv+='<line x1="'+a[0]+'" y1="'+a[1]+'" x2="'+b[0]+'" y2="'+b[1]+'" stroke="var(--bd)" stroke-width="10" stroke-linecap="round"'+(e[2]=="s"?' stroke-dasharray="3 6"':'')+'/>'});
+ r.segs.forEach(function(s){var a=N[s[0]],b=N[s[1]];sv+='<line x1="'+a[0]+'" y1="'+a[1]+'" x2="'+b[0]+'" y2="'+b[1]+'" stroke="var(--pr)" stroke-width="6" stroke-linecap="round"/>'});
+ Object.keys(N).forEach(function(k){var p=N[k],big_=["E","OPD","PH","LAB"].indexOf(k)>=0;sv+='<circle cx="'+p[0]+'" cy="'+p[1]+'" r="'+(big_?9:5)+'" fill="'+(k==S.dsel?"var(--pr)":"var(--card)")+'" stroke="var(--tx)" stroke-width="2"/>';
+  if(big_)sv+='<text x="'+p[0]+'" y="'+(p[1]+(k=="OPD"?-14:24))+'" text-anchor="middle">'+t(NM[k])+'</text>'});
+ sv+='<text x="285" y="204" text-anchor="middle" style="font-size:9px">'+(L=="en"?"steps":"പടികൾ")+'</text><text x="170" y="236" text-anchor="middle" style="font-size:9px">'+(L=="en"?"ramp":"റാമ്പ്")+'</text></svg>';
+ return'<div class="card"><label for="dp">'+t("to")+'</label><select id="dp">'+opts(S.dsel)+'</select><label><input type="checkbox" id="wc"'+(S.wc?" checked":"")+'> '+t("wc")+'</label></div>'+sv+'<div class="card"><b>'+t("route")+'</b> <span class="muted">'+t("tot")+': '+Math.round(r.len/6)+' '+t("m")+'</span><ol>'+ds.map(function(x){return"<li>"+x+"</li>"}).join("")+'</ol><button class="p" id="sp">🔊 '+t("sp")+'</button></div>'}
+function save(){try{localStorage.setItem("sq",JSON.stringify({q:S.q,cur:S.cur,n:S.n,sv:S.sv}))}catch(e){}}
+function load(){try{var x=JSON.parse(localStorage.getItem("sq"));if(x){S.q=x.q;S.cur=x.cur;S.n=x.n;S.sv=x.sv}}catch(e){}}
+window.addEventListener("storage",function(e){if(e.key!="sq")return;var o=S.cur;load();if(view=="tv")D.forEach(function(d){if(S.cur[d]&&(!o[d]||o[d].id!=S.cur[d].id))speak([(L=="en"?"Token ":"ടോക്കൺ ")+S.cur[d].id.split("").join(" ")+", "+t(d)])});render()});
+function render(){save();var V={pa:vPa,st:vSt,tv:vTv,mp:vMp};
+ document.getElementById("ti").textContent=t("ti");document.documentElement.lang=L;
+ document.getElementById("nav").innerHTML=["pa","st","tv","mp"].map(function(k){return'<button data-v="'+k+'" class="'+(view==k?"on":"")+'"><span>'+{pa:"🎟️",st:"🧑‍⚕️",tv:"📺",mp:"🗺️"}[k]+'</span>'+t(k)+'</button>'}).join("");
+ var keep=document.getElementById("nm"),nv=keep?keep.value:"";
+ document.getElementById("app").innerHTML=V[view]();var n2=document.getElementById("nm");if(n2)n2.value=nv;wire()}
+function $(i){return document.getElementById(i)}
+function wire(){var dp=$("dp");if(dp)dp.onchange=function(){S.dsel=dp.value;render()};
+ if($("gt"))$("gt").onclick=function(){var nm=$("nm").value.trim()||(L=="en"?"Patient":"രോഗി");S.dsel=$("dp").value;S.mine=mk(nm,S.dsel,$("pr").checked);render()};
+ if($("cn"))$("cn").onclick=function(){var d=S.dsel;S.cur[d]=S.q[d].shift()||null;if(S.cur[d])speak([(L=="en"?"Token ":"ടോക്കൺ ")+S.cur[d].id.split("").join(" ")+", "+t(d)]);render()};
+ if($("dn"))$("dn").onclick=function(){if(S.cur[S.dsel])S.sv[S.dsel]++;S.cur[S.dsel]=null;render()};
+ if($("rc"))$("rc").onclick=function(){var c=S.cur[S.dsel];if(c)speak([(L=="en"?"Token ":"ടോക്കൺ ")+c.id.split("").join(" ")+", "+t(S.dsel)])};
+ if($("rt"))$("rt").onclick=function(){S.dsel=S.mine.d;view="mp";render()};
+ if($("cx"))$("cx").onclick=function(){var m=S.mine;S.q[m.d]=S.q[m.d].filter(function(x){return x.id!=m.id});S.mine=null;render()};
+ if($("sk"))$("sk").onclick=function(){var d=S.dsel,c=S.cur[d];if(c){S.q[d].push(c);S.cur[d]=null}render()};
+ if($("dm"))$("dm").onclick=function(){var d=S.dsel;["Anil","Meera","Joseph","Fathima","Suresh"].forEach(function(n,i){mk(n,d,i==2)});render()};
+ if($("wc"))$("wc").onchange=function(){S.wc=$("wc").checked;render()};
+ if($("sp"))$("sp").onclick=function(){speak(dirs(route(S.from,S.dsel,S.wc)))};
+ document.querySelectorAll("nav button").forEach(function(b){b.onclick=function(){view=b.dataset.v;render()}})}
+$("bl").onclick=function(){L=L=="en"?"ml":"en";$("bl").textContent=L=="en"?"മലയാളം":"English";render()};
+$("bf").onclick=function(){big=!big;document.documentElement.classList.toggle("big",big)};
+$("bh").onclick=function(){var r=document.documentElement;r.hasAttribute("data-hc")?r.removeAttribute("data-hc"):r.setAttribute("data-hc","")};
+load();render();
+</script></body></html>
